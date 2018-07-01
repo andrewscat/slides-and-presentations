@@ -52,23 +52,75 @@ spec:
 ---
 # Core primitives
 ## Volumes
-```yaml
+.center[![docker_container](img/volumes.png)]
+
+---
+# Core primitives
+## Volumes. Persistent volume
+```yml
+kind: PersistentVolume
 apiVersion: v1
-kind: Pod
 metadata:
-  name: test-pd
+  name: task-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  awsElasticBlockStore:
+    volumeID: vol-867g5kii
+    fsType: ext4
+```
+---
+# Core primitives
+## Volumes. Persistent volume claim
+```yml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: task-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+```
+---
+# Core primitives
+## Volumes. Persistent volume claim
+```yaml
+kind: Pod
+apiVersion: v1
+metadata:
+  name: task-pod
 spec:
   containers:
-  - image: k8s.gcr.io/test-webserver
-    name: test-container
-    volumeMounts:
-    - mountPath: /test-pd
-      name: test-volume
+    - name: task-container
+      image: mysql:5.6
+      ports:
+        - containerPort: 3306
+      volumeMounts:
+        - mountPath: "/var/lib/mysql"
+          name: task-pvc
   volumes:
-  - name: test-volume
-    hostPath:
-      path: /data
-      type: Directory
+    - name: task-volume
+      persistentVolumeClaim:
+       claimName: task-pvc
+```
+---
+# Core primitives
+## Volumes. Storage class
+```yaml
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: slow
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: io1
+  zone: us-east-1d
+  iopsPerGB: "10"
 ```
 ---
 # Core primitives
@@ -91,6 +143,19 @@ spec:
 - storageos
 - vsphereVolume
 - ...
+---
+# Core primitives
+## Config maps
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: special-config
+  namespace: default
+data:
+  special.level: very
+  special.type: charm
+```
 ---
 # Core primitives
 ## Secrets
@@ -153,19 +218,6 @@ spec:
 ```
 ---
 # Core primitives
-## Config maps
-```yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: special-config
-  namespace: default
-data:
-  special.level: very
-  special.type: charm
-```
----
-# Core primitives
 ## Deployment
 ```yaml
 apiVersion: apps/v1
@@ -214,10 +266,10 @@ spec:
 ---
 # Core primitives
 ## Service types.
-- __ClusterIP__: Exposes the service on a cluster-internal IP. Choosing this value makes the service only reachable from within the cluster. This is the default ServiceType.
-- __NodePort__: Exposes the service on each Node’s IP at a static port (the NodePort). A ClusterIP service, to which the NodePort service will route, is automatically created. You’ll be able to contact the NodePort service, from outside the cluster, by requesting <NodeIP>:<NodePort>.
-- __LoadBalancer__: Exposes the service externally using a cloud provider’s load balancer. NodePort and ClusterIP services, to which the external load balancer will route, are automatically created.
-- __ExternalName__: Maps the service to the contents of the externalName field (e.g. foo.bar.example.com), by returning a CNAME record with its value. No proxying of any kind is set up. This requires version 1.7 or higher of kube-dns
+- __ClusterIP__
+- __NodePort__
+- __LoadBalancer__
+- __ExternalName__
 ---
 # Core primitives
 ## Selectors
@@ -232,18 +284,6 @@ spec:
 - Jobs
 - Namespaces (default, kube-system...)
 - DNS
----
-# Hometask
-1. Try Minikube
- - install kubectl
- - install minikube
- - run kubernetes cluster with minikube
- - try web-ui `minikube dashboard`
- - try kubectl
-2. Run your first application inside Minikube
- - follow [the tutorial](https://kubernetes.io/docs/tasks/run-application/run-stateless-application-deployment/)
-3. (Optional) Run Wordpress inside Minikube
- - follow [the tutorial](https://kubernetes.io/docs/tutorials/stateful-application/mysql-wordpress-persistent-volume/)
 ---
 # Reading list
 ## Jonathan Baier, Getting Started with Kubernetes, Second edition, 2017
