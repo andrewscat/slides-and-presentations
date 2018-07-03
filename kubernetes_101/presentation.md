@@ -285,6 +285,13 @@ spec:
 - Namespaces (default, kube-system...)
 - DNS
 ---
+# Try Kubernetes
+- __minikube__: runs a single-node Kubernetes cluster inside a VM on your laptop for users looking to try out Kubernetes.
+- __kubeadm__: is a tool built to provide the best-practice “fast paths” for creating Kubernetes clusters.
+- __katacoda__: learn Kubernetes using Interactive Browser-Based Scenarios
+- __google kubernetes engine__: is a managed, production-ready environment for deploying containerized applications.
+
+---
 # Reading list
 ## Jonathan Baier, Getting Started with Kubernetes, Second edition, 2017
 .center[![Getting Started with Kubernetes](img/book.png)]
