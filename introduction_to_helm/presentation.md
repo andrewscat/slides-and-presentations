@@ -17,7 +17,7 @@ The package manager for Kubernetes
 # Architecture
 .center[![helm_architecture](img/architecture.png)]
 ---
-# Charts, reposiories, releases
+# Charts, repositories, releases
 - __Charts:__  a boundle of Kubernetes resources (like operationg system package)
 - __Repository:__ a collection of released charts (like Ubuntu repository)
 - __Release:__ a chart that is loaded into Kubernetes
